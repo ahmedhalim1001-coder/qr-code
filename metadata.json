@@ -1,0 +1,7 @@
+{
+  "name": "Shipment Scanning Dashboard",
+  "description": "A comprehensive dashboard for managing and tracking scanned shipments. It allows for viewing, filtering, and exporting shipment data, as well as managing users, devices, and shipping companies. Includes a web-based barcode scanning feature.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
