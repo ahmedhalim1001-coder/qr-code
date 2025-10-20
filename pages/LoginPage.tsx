@@ -26,16 +26,18 @@ const LoginPage: React.FC = () => {
       setIsLoading(false);
     }
   };
+  
+  const inputClass = "appearance-none relative block w-full px-4 py-3 border border-neutral-300 bg-neutral-50 placeholder-neutral-500 text-neutral-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 focus:z-10 sm:text-sm transition duration-150 ease-in-out focus:bg-white";
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-secondary-100">
+    <div className="flex items-center justify-center min-h-screen bg-neutral-100">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-2xl shadow-lg">
         <div className="flex flex-col items-center">
             <div className="flex items-center justify-center mb-4">
                 <QrCode className="h-12 w-12 text-primary-600" />
-                <span className="mr-3 text-3xl font-bold text-secondary-800">ShipmentScan</span>
+                <span className="mr-3 text-3xl font-bold text-neutral-800">ShipmentScan</span>
             </div>
-          <h2 className="text-xl text-center text-secondary-600">سجّل الدخول إلى حسابك</h2>
+          <h2 className="text-xl text-center text-neutral-600">سجّل الدخول إلى حسابك</h2>
         </div>
         <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
@@ -46,7 +48,7 @@ const LoginPage: React.FC = () => {
                 type="text"
                 autoComplete="username"
                 required
-                className="appearance-none relative block w-full px-3 py-3 border border-secondary-300 placeholder-secondary-500 text-secondary-900 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
+                className={inputClass}
                 placeholder="اسم المستخدم (مثال: admin أو ibrahim)"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -60,7 +62,7 @@ const LoginPage: React.FC = () => {
                 type="password"
                 autoComplete="current-password"
                 required
-                className="appearance-none relative block w-full px-3 py-3 border border-secondary-300 placeholder-secondary-500 text-secondary-900 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
+                className={inputClass}
                 placeholder="كلمة المرور"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -81,8 +83,8 @@ const LoginPage: React.FC = () => {
           </div>
         </form>
 
-        <div className="pt-6 border-t border-secondary-200">
-          <div className="p-4 bg-primary-50 rounded-lg text-sm text-secondary-700 text-right">
+        <div className="pt-6 border-t border-neutral-200">
+          <div className="p-4 bg-primary-50 rounded-lg text-sm text-neutral-700 text-right">
             <h3 className="font-semibold text-primary-800 mb-2 flex items-center justify-end">
               بيانات الاعتماد التجريبية
               <Users size={16} className="ml-2 text-primary-600" />

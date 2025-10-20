@@ -102,13 +102,13 @@ const UsersPage: React.FC = () => {
         return <Navigate to="/dashboard" replace />;
     }
     
-    const formControlClass = "block w-full rounded-lg border-secondary-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm transition";
+    const formControlClass = "block w-full rounded-lg border-neutral-300 bg-neutral-50 focus:bg-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/50 sm:text-sm transition duration-150 ease-in-out";
 
 
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
-                <h1 className="text-3xl font-bold text-secondary-800">إدارة المستخدمين</h1>
+                <h1 className="text-3xl font-bold text-neutral-800">إدارة المستخدمين</h1>
                 <button onClick={() => handleOpenModal()} className="flex items-center gap-2 bg-primary-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-primary-700">
                   <Plus size={20} />
                   إضافة مستخدم
@@ -116,31 +116,31 @@ const UsersPage: React.FC = () => {
             </div>
             <Card>
                 <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-secondary-200">
-                        <thead className="bg-secondary-50">
+                    <table className="min-w-full divide-y divide-neutral-200">
+                        <thead className="bg-neutral-100">
                             <tr>
-                                <th className="px-6 py-3 text-right text-xs font-medium text-secondary-500 uppercase tracking-wider">الاسم الكامل</th>
-                                <th className="px-6 py-3 text-right text-xs font-medium text-secondary-500 uppercase tracking-wider">اسم المستخدم</th>
-                                <th className="px-6 py-3 text-right text-xs font-medium text-secondary-500 uppercase tracking-wider">الدور</th>
-                                <th className="px-6 py-3 text-right text-xs font-medium text-secondary-500 uppercase tracking-wider">تاريخ الإنشاء</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">الإجراءات</th>
+                                <th className="px-6 py-3 text-right text-xs font-semibold text-neutral-600 uppercase tracking-wider">الاسم الكامل</th>
+                                <th className="px-6 py-3 text-right text-xs font-semibold text-neutral-600 uppercase tracking-wider">اسم المستخدم</th>
+                                <th className="px-6 py-3 text-right text-xs font-semibold text-neutral-600 uppercase tracking-wider">الدور</th>
+                                <th className="px-6 py-3 text-right text-xs font-semibold text-neutral-600 uppercase tracking-wider">تاريخ الإنشاء</th>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-neutral-600 uppercase tracking-wider">الإجراءات</th>
                             </tr>
                         </thead>
-                        <tbody className="bg-white divide-y divide-secondary-200">
+                        <tbody className="bg-white divide-y divide-neutral-200">
                             {isLoading ? (
                                 <tr><td colSpan={5} className="text-center py-10"><Loader2 className="h-8 w-8 animate-spin mx-auto text-primary-500" /></td></tr>
                             ) : (
                                 users.map((user, index) => (
-                                    <tr key={user.id} className="animate-fade-in" style={{ animationDelay: `${index * 50}ms` }}>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-secondary-900">{user.fullName}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary-500">{user.username}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary-500">
+                                    <tr key={user.id} className="hover:bg-neutral-50 animate-fade-in" style={{ animationDelay: `${index * 50}ms` }}>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900">{user.fullName}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">{user.username}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">
                                             <span className={`px-2.5 py-0.5 inline-flex items-center text-xs leading-5 font-semibold rounded-full ${user.role === 'admin' ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'}`}>
                                                 {user.role === 'admin' ? <Shield size={14} className="ml-1 -mr-1"/> : <UserCheck size={14} className="ml-1 -mr-1"/>}
                                                 {user.role === 'admin' ? 'مدير' : 'مستخدم'}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary-500">{new Date(user.createdAt).toLocaleDateString('ar-SA')}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">{new Date(user.createdAt).toLocaleDateString('ar-SA')}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-left text-sm font-medium space-x-2">
                                             <button onClick={() => handleOpenModal(user)} className="text-primary-600 hover:text-primary-900 p-2 rounded-full hover:bg-primary-100">
                                                 <Edit size={18} />
@@ -160,25 +160,25 @@ const UsersPage: React.FC = () => {
             <Modal isOpen={isModalOpen} onClose={handleCloseModal} title={editingUser ? 'تعديل المستخدم' : 'إضافة مستخدم جديد'}>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label htmlFor="fullName" className="block text-sm font-medium text-secondary-700 mb-1">الاسم الكامل</label>
+                        <label htmlFor="fullName" className="block text-sm font-medium text-neutral-700 mb-1">الاسم الكامل</label>
                         <input type="text" name="fullName" id="fullName" value={formData.fullName} onChange={handleFormChange} className={formControlClass} required />
                     </div>
                     <div>
-                        <label htmlFor="username" className="block text-sm font-medium text-secondary-700 mb-1">اسم المستخدم</label>
+                        <label htmlFor="username" className="block text-sm font-medium text-neutral-700 mb-1">اسم المستخدم</label>
                         <input type="text" name="username" id="username" value={formData.username} onChange={handleFormChange} className={formControlClass} required />
                     </div>
                     <div>
-                        <label htmlFor="role" className="block text-sm font-medium text-secondary-700 mb-1">الدور</label>
+                        <label htmlFor="role" className="block text-sm font-medium text-neutral-700 mb-1">الدور</label>
                         <select name="role" id="role" value={formData.role} onChange={handleFormChange} className={formControlClass} disabled={editingUser?.id === 1}>
                            <option value="user">مستخدم</option>
                            <option value="admin">مدير</option>
                         </select>
-                        {editingUser?.id === 1 && <p className="text-xs text-secondary-500 mt-1">لا يمكن تغيير دور المسؤول الرئيسي.</p>}
+                        {editingUser?.id === 1 && <p className="text-xs text-neutral-500 mt-1">لا يمكن تغيير دور المسؤول الرئيسي.</p>}
                     </div>
                     {error && <p className="text-sm text-red-600">{error}</p>}
                     <div className="flex justify-start space-x-3 pt-2">
                         <button type="submit" className="bg-primary-600 py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white hover:bg-primary-700">حفظ المستخدم</button>
-                        <button type="button" onClick={handleCloseModal} className="bg-white py-2 px-4 border border-secondary-300 rounded-lg shadow-sm text-sm font-medium text-secondary-700 hover:bg-secondary-50">إلغاء</button>
+                        <button type="button" onClick={handleCloseModal} className="bg-white py-2 px-4 border border-neutral-300 rounded-lg shadow-sm text-sm font-medium text-neutral-700 hover:bg-neutral-50">إلغاء</button>
                     </div>
                 </form>
             </Modal>

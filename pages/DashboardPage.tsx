@@ -25,8 +25,8 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon: Icon, isLoading
                     <Icon className="w-6 h-6 text-primary-600" />
                 </div>
                 <div className="mr-4">
-                    <p className="text-sm font-medium text-secondary-500">{title}</p>
-                    <p className="text-2xl font-bold text-secondary-800">{value}</p>
+                    <p className="text-sm font-medium text-neutral-500">{title}</p>
+                    <p className="text-2xl font-bold text-neutral-800">{value}</p>
                 </div>
             </div>
         )}
@@ -39,24 +39,24 @@ const ScansByCompanyChart: React.FC<{ data: { name: string; count: number }[], i
 
     return (
         <Card className="h-full">
-            <h3 className="font-semibold text-secondary-700 flex items-center gap-2"><BarChart2 size={18}/> المسحات حسب الشركة</h3>
+            <h3 className="font-semibold text-neutral-700 flex items-center gap-2"><BarChart2 size={18}/> المسحات حسب الشركة</h3>
             <div className="mt-4 h-72 flex flex-col justify-center">
             {isLoading ? (
                 <Loader2 className="w-8 h-8 animate-spin text-primary-500 mx-auto" />
             ) : (
                 <div className="animate-fade-in w-full h-full">
                     {top5Data.length === 0 ? (
-                        <p className="text-center text-secondary-500 pt-28">لا توجد بيانات مسح متاحة.</p>
+                        <p className="text-center text-neutral-500 pt-28">لا توجد بيانات مسح متاحة.</p>
                     ) : (
                         <div className="flex justify-around items-end h-full space-x-2 pt-4">
                             {top5Data.map(item => (
                                 <div key={item.name} className="flex flex-col items-center flex-1" title={`${item.name}: ${item.count} مسحات`}>
-                                    <div className="text-sm font-bold text-secondary-700">{item.count}</div>
+                                    <div className="text-sm font-bold text-neutral-700">{item.count}</div>
                                     <div
                                         className="w-full bg-primary-400 rounded-t-md hover:bg-primary-500 transition-all"
                                         style={{ height: `${(item.count / maxCount) * 100}%` }}
                                     ></div>
-                                    <span className="mt-2 text-xs text-secondary-500 text-center break-words w-full">{item.name}</span>
+                                    <span className="mt-2 text-xs text-neutral-500 text-center break-words w-full">{item.name}</span>
                                 </div>
                             ))}
                         </div>
@@ -84,22 +84,22 @@ const ScansOverTimeChart: React.FC<{ data: { date: string; count: number }[], is
 
     return (
         <Card className="h-full">
-            <h3 className="font-semibold text-secondary-700 flex items-center gap-2"><LineChart size={18}/> نشاط المسح (آخر 30 يومًا)</h3>
+            <h3 className="font-semibold text-neutral-700 flex items-center gap-2"><LineChart size={18}/> نشاط المسح (آخر 30 يومًا)</h3>
             <div className="mt-4 h-72 flex items-center justify-center">
                 {isLoading ? (
                      <Loader2 className="w-8 h-8 animate-spin text-primary-500 mx-auto" />
                 ) : (
                     <div className="animate-fade-in w-full h-full">
                         {data.length < 2 ? (
-                            <p className="text-center text-secondary-500 pt-28">لا توجد بيانات كافية لعرض الرسم البياني.</p>
+                            <p className="text-center text-neutral-500 pt-28">لا توجد بيانات كافية لعرض الرسم البياني.</p>
                         ) : (
                             <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto">
-                                <line x1={padding} y1={height - yPadding} x2={width - padding} y2={height - yPadding} className="stroke-current text-secondary-300" strokeWidth="1"/>
-                                <text x={padding - 5} y={height - yPadding + 4} textAnchor="end" className="text-xs fill-current text-secondary-500">0</text>
-                                <text x={padding- 5} y={height - yPadding - ((height - yPadding * 1.5)) + 4} textAnchor="end" className="text-xs fill-current text-secondary-500">{maxCount}</text>
+                                <line x1={padding} y1={height - yPadding} x2={width - padding} y2={height - yPadding} className="stroke-current text-neutral-300" strokeWidth="1"/>
+                                <text x={padding - 5} y={height - yPadding + 4} textAnchor="end" className="text-xs fill-current text-neutral-500">0</text>
+                                <text x={padding- 5} y={height - yPadding - ((height - yPadding * 1.5)) + 4} textAnchor="end" className="text-xs fill-current text-neutral-500">{maxCount}</text>
                                 <polyline fill="none" className="stroke-primary-500" strokeWidth="2" points={points}/>
-                                <text x={width - padding} y={height - yPadding + 15} textAnchor="end" className="text-xs fill-current text-secondary-500">{new Date(data[data.length-1]?.date).toLocaleDateString('ar-SA', { month: 'short', day: 'numeric' })}</text>
-                                <text x={padding} y={height - yPadding + 15} textAnchor="start" className="text-xs fill-current text-secondary-500">اليوم</text>
+                                <text x={width - padding} y={height - yPadding + 15} textAnchor="end" className="text-xs fill-current text-neutral-500">{new Date(data[data.length-1]?.date).toLocaleDateString('ar-SA', { month: 'short', day: 'numeric' })}</text>
+                                <text x={padding} y={height - yPadding + 15} textAnchor="start" className="text-xs fill-current text-neutral-500">اليوم</text>
                             </svg>
                         )}
                     </div>
@@ -309,11 +309,11 @@ const DashboardPage: React.FC = () => {
 
   const totalPages = Math.ceil(pagination.total / pagination.limit);
 
-  const formControlClass = "w-full rounded-lg border-secondary-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm transition";
+  const formControlClass = "w-full rounded-lg border-neutral-300 bg-neutral-50 focus:bg-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/50 sm:text-sm transition duration-150 ease-in-out";
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold text-secondary-800">لوحة التحكم</h1>
+      <h1 className="text-3xl font-bold text-neutral-800">لوحة التحكم</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <StatCard title="إجمالي الشحنات" value={stats.totalShipments} icon={Package} isLoading={isStatsLoading} />
@@ -329,8 +329,8 @@ const DashboardPage: React.FC = () => {
       <Card>
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
             <div className="flex items-center space-x-2">
-                <Filter className="w-5 h-5 text-secondary-500" />
-                <h2 className="text-xl font-semibold text-secondary-700">تفاصيل الشحنات والفلاتر</h2>
+                <Filter className="w-5 h-5 text-neutral-500" />
+                <h2 className="text-xl font-semibold text-neutral-700">تفاصيل الشحنات والفلاتر</h2>
             </div>
             <button 
               onClick={handleExportCsv}
@@ -343,15 +343,15 @@ const DashboardPage: React.FC = () => {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <div>
-            <label htmlFor="from" className="block text-sm font-medium text-secondary-700 mb-1">من تاريخ</label>
+            <label htmlFor="from" className="block text-sm font-medium text-neutral-700 mb-1">من تاريخ</label>
             <input type="date" id="from" name="from" value={filters.from} onChange={handleFilterChange} className={formControlClass} />
           </div>
           <div>
-            <label htmlFor="to" className="block text-sm font-medium text-secondary-700 mb-1">إلى تاريخ</label>
+            <label htmlFor="to" className="block text-sm font-medium text-neutral-700 mb-1">إلى تاريخ</label>
             <input type="date" id="to" name="to" value={filters.to} onChange={handleFilterChange} className={formControlClass} />
           </div>
           <div>
-            <label htmlFor="companyId" className="block text-sm font-medium text-secondary-700 mb-1">الشركة</label>
+            <label htmlFor="companyId" className="block text-sm font-medium text-neutral-700 mb-1">الشركة</label>
             <select id="companyId" name="companyId" value={filters.companyId} onChange={handleFilterChange} className={formControlClass}>
               <option value="">كل الشركات</option>
               {companies.map(c => <option key={c.id} value={c.id}>{c.companyName}</option>)}
@@ -359,7 +359,7 @@ const DashboardPage: React.FC = () => {
           </div>
           {currentUser?.role === 'admin' && (
             <div>
-              <label htmlFor="userId" className="block text-sm font-medium text-secondary-700 mb-1">المستخدم</label>
+              <label htmlFor="userId" className="block text-sm font-medium text-neutral-700 mb-1">المستخدم</label>
               <select id="userId" name="userId" value={filters.userId} onChange={handleFilterChange} className={formControlClass}>
                 <option value="">كل المستخدمين</option>
                 {users.map(u => <option key={u.id} value={u.id}>{u.fullName}</option>)}
@@ -369,34 +369,34 @@ const DashboardPage: React.FC = () => {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-secondary-200">
-            <thead className="bg-secondary-50">
+          <table className="min-w-full divide-y divide-neutral-200">
+            <thead className="bg-neutral-100">
               <tr>
-                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-secondary-500 uppercase tracking-wider">الباركود</th>
-                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-secondary-500 uppercase tracking-wider">الشركة</th>
-                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-secondary-500 uppercase tracking-wider">المستخدم</th>
-                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-secondary-500 uppercase tracking-wider">وقت المسح</th>
-                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-secondary-500 uppercase tracking-wider">الحالة</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">الإجراءات</th>
+                <th scope="col" className="px-6 py-3 text-right text-xs font-semibold text-neutral-600 uppercase tracking-wider">الباركود</th>
+                <th scope="col" className="px-6 py-3 text-right text-xs font-semibold text-neutral-600 uppercase tracking-wider">الشركة</th>
+                <th scope="col" className="px-6 py-3 text-right text-xs font-semibold text-neutral-600 uppercase tracking-wider">المستخدم</th>
+                <th scope="col" className="px-6 py-3 text-right text-xs font-semibold text-neutral-600 uppercase tracking-wider">وقت المسح</th>
+                <th scope="col" className="px-6 py-3 text-right text-xs font-semibold text-neutral-600 uppercase tracking-wider">الحالة</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-semibold text-neutral-600 uppercase tracking-wider">الإجراءات</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-secondary-200">
+            <tbody className="bg-white divide-y divide-neutral-200">
               {isLoading ? (
                 <tr><td colSpan={6} className="text-center py-10"><Loader2 className="h-8 w-8 animate-spin mx-auto text-primary-500" /></td></tr>
               ) : shipments.length === 0 ? (
-                <tr><td colSpan={6} className="text-center py-10 text-secondary-500">لم يتم العثور على شحنات.</td></tr>
+                <tr><td colSpan={6} className="text-center py-10 text-neutral-500">لم يتم العثور على شحنات.</td></tr>
               ) : (
                 shipments.map((shipment, index) => (
-                  <tr key={shipment.id} className="hover:bg-secondary-50 animate-fade-in" style={{ animationDelay: `${index * 50}ms` }}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-secondary-800 text-right">{shipment.barcode}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary-600 text-right">{shipment.companyName}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary-600 text-right">{shipment.userName || 'N/A'}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary-600 text-right">{new Date(shipment.scannedAt).toLocaleString('ar-SA')}</td>
+                  <tr key={shipment.id} className="hover:bg-neutral-50 animate-fade-in" style={{ animationDelay: `${index * 50}ms` }}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-neutral-800 text-right">{shipment.barcode}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-600 text-right">{shipment.companyName}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-600 text-right">{shipment.userName || 'N/A'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-600 text-right">{new Date(shipment.scannedAt).toLocaleString('ar-SA')}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <select 
                         value={shipment.status} 
                         onChange={(e) => handleStatusChange(shipment.id, e.target.value as ShipmentStatus)}
-                        className="w-full rounded-md border-secondary-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm transition p-1 bg-secondary-50"
+                        className="w-full rounded-md border-neutral-300 bg-neutral-50 focus:bg-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/50 sm:text-sm transition duration-150 ease-in-out p-1"
                       >
                         {shipmentStatuses.map(status => (
                           <option key={status} value={status}>{status}</option>
@@ -441,22 +441,22 @@ const PaginationControls: React.FC<{pagination: {page: number, limit: number, to
     const endItem = Math.min(page * limit, total);
     
     return (
-        <div className="flex items-center justify-between mt-4 px-2 py-2 border-t border-secondary-200">
-             <div className="text-sm text-secondary-600">
+        <div className="flex items-center justify-between mt-4 px-2 py-2 border-t border-neutral-200">
+             <div className="text-sm text-neutral-600">
                 عرض <span className="font-medium">{startItem}</span> إلى <span className="font-medium">{endItem}</span> من أصل <span className="font-medium">{total}</span> نتيجة
             </div>
             <div className="flex items-center space-x-1">
-                <button onClick={() => onPageChange(totalPages)} disabled={page === totalPages || totalPages === 0} className="p-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-secondary-100">
+                <button onClick={() => onPageChange(totalPages)} disabled={page === totalPages || totalPages === 0} className="p-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-100">
                     <ChevronsRight className="w-5 h-5"/>
                 </button>
-                <button onClick={() => onPageChange(page + 1)} disabled={page === totalPages || totalPages === 0} className="p-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-secondary-100">
+                <button onClick={() => onPageChange(page + 1)} disabled={page === totalPages || totalPages === 0} className="p-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-100">
                     <ChevronRight className="w-5 h-5"/>
                 </button>
                 <span className="px-4 py-2 text-sm font-medium">صفحة {page} من {totalPages}</span>
-                <button onClick={() => onPageChange(page - 1)} disabled={page === 1} className="p-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-secondary-100">
+                <button onClick={() => onPageChange(page - 1)} disabled={page === 1} className="p-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-100">
                     <ChevronLeft className="w-5 h-5"/>
                 </button>
-                <button onClick={() => onPageChange(1)} disabled={page === 1} className="p-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-secondary-100">
+                <button onClick={() => onPageChange(1)} disabled={page === 1} className="p-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-neutral-100">
                     <ChevronsLeft className="w-5 h-5"/>
                 </button>
             </div>

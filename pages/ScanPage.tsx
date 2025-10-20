@@ -168,11 +168,11 @@ const ScanPage: React.FC = () => {
         setIsLoading(false);
     };
 
-    const formControlClass = "w-full rounded-lg border-secondary-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm transition";
+    const formControlClass = "w-full rounded-lg border-neutral-300 bg-neutral-50 focus:bg-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/50 sm:text-sm transition duration-150 ease-in-out";
 
     return (
         <div className="space-y-6 max-w-4xl mx-auto">
-            <h1 className="text-3xl font-bold text-secondary-800">مسح الويب</h1>
+            <h1 className="text-3xl font-bold text-neutral-800">مسح الويب</h1>
 
             {offlineScans.length > 0 && (
                 <Card className="bg-yellow-50 border-yellow-200">
@@ -199,7 +199,7 @@ const ScanPage: React.FC = () => {
             <Card>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label htmlFor="company" className="block text-sm font-medium text-secondary-700 mb-1">اختر شركة الشحن</label>
+                        <label htmlFor="company" className="block text-sm font-medium text-neutral-700 mb-1">اختر شركة الشحن</label>
                         <select
                             id="company"
                             value={selectedCompany}
@@ -213,9 +213,9 @@ const ScanPage: React.FC = () => {
                     </div>
 
                     <div>
-                        <label htmlFor="barcode" className="block text-sm font-medium text-secondary-700 mb-1">أدخل أو امسح الباركود</label>
+                        <label htmlFor="barcode" className="block text-sm font-medium text-neutral-700 mb-1">أدخل أو امسح الباركود</label>
                         <div className="relative">
-                            <QrCode className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-secondary-400" />
+                            <QrCode className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-neutral-400" />
                             <input
                                 ref={barcodeInputRef}
                                 id="barcode"
@@ -256,16 +256,16 @@ const ScanPage: React.FC = () => {
 
             {lastScans.length > 0 && (
                 <Card>
-                    <h2 className="text-xl font-semibold text-secondary-700 mb-4">المسحات الأخيرة</h2>
+                    <h2 className="text-xl font-semibold text-neutral-700 mb-4">المسحات الأخيرة</h2>
                     <div className="max-h-96 overflow-y-auto pr-2">
-                        <ul className="divide-y divide-secondary-200">
+                        <ul className="divide-y divide-neutral-200">
                             {lastScans.map((scan, index) => (
                                 <li key={`${scan.id}-${scan.barcode}`} className={`py-3 flex justify-between items-center ${index === 0 ? 'animate-fade-in-up' : ''}`}>
                                     <div>
-                                        <p className="font-mono text-secondary-800">{scan.barcode}</p>
-                                        <p className="text-sm text-secondary-500">{scan.companyName}</p>
+                                        <p className="font-mono text-neutral-800">{scan.barcode}</p>
+                                        <p className="text-sm text-neutral-500">{scan.companyName}</p>
                                     </div>
-                                    <p className="text-sm text-secondary-500">{new Date(scan.scannedAt).toLocaleTimeString('ar-SA')}</p>
+                                    <p className="text-sm text-neutral-500">{new Date(scan.scannedAt).toLocaleTimeString('ar-SA')}</p>
                                 </li>
                             ))}
                         </ul>

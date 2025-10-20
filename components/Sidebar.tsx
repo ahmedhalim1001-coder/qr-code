@@ -6,7 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 const Sidebar: React.FC = () => {
     const { user, logout } = useAuth();
     const navLinkClass = ({ isActive }: { isActive: boolean }) =>
-        `flex items-center px-4 py-3 text-secondary-300 transition-colors duration-200 transform rounded-lg hover:bg-secondary-800 hover:text-white ${isActive ? 'bg-primary-600 text-white font-semibold' : ''}`;
+        `flex items-center px-4 py-3 text-neutral-300 transition-colors duration-200 transform rounded-lg hover:bg-neutral-800 hover:text-white ${isActive ? 'bg-primary-600 text-white font-semibold' : ''}`;
 
     const navItems = [
         { to: "/dashboard", icon: LayoutDashboard, label: "لوحة التحكم" },
@@ -17,8 +17,8 @@ const Sidebar: React.FC = () => {
     ];
 
     return (
-        <aside className="hidden md:flex flex-col w-64 bg-secondary-900 text-secondary-100">
-            <div className="flex items-center justify-center h-20 border-b border-secondary-800">
+        <aside className="hidden md:flex flex-col w-64 bg-neutral-900 text-neutral-100">
+            <div className="flex items-center justify-center h-20 border-b border-neutral-800">
                 <QrCode className="h-8 w-8 text-primary-400" />
                 <span className="mr-3 text-2xl font-bold text-white">ShipmentScan</span>
             </div>
@@ -32,10 +32,10 @@ const Sidebar: React.FC = () => {
                     )
                 ))}
             </nav>
-             <div className="px-4 py-4 border-t border-secondary-800">
+             <div className="px-4 py-4 border-t border-neutral-800">
                 <button
                     onClick={logout}
-                    className="w-full flex items-center px-4 py-3 text-secondary-300 transition-colors duration-200 transform rounded-lg hover:bg-secondary-800 hover:text-white"
+                    className="w-full flex items-center px-4 py-3 text-neutral-300 transition-colors duration-200 transform rounded-lg hover:bg-neutral-800 hover:text-white"
                     aria-label="تسجيل الخروج"
                 >
                     <LogOut className="h-5 w-5" />

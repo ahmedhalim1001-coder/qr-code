@@ -89,12 +89,12 @@ const CompaniesPage: React.FC = () => {
   };
 
 
-  const formInputClass = "block w-full pr-10 rounded-lg border-secondary-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm transition";
+  const formInputClass = "block w-full pr-10 rounded-lg border-neutral-300 bg-neutral-50 focus:bg-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/50 sm:text-sm transition duration-150 ease-in-out";
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-secondary-800">إدارة شركات الشحن</h1>
+        <h1 className="text-3xl font-bold text-neutral-800">إدارة شركات الشحن</h1>
         <button onClick={() => handleOpenModal()} className="flex items-center gap-2 bg-primary-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-primary-700">
           <Plus size={20} />
           إضافة شركة
@@ -103,24 +103,24 @@ const CompaniesPage: React.FC = () => {
 
       <Card>
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-secondary-200">
-            <thead className="bg-secondary-50">
+          <table className="min-w-full divide-y divide-neutral-200">
+            <thead className="bg-neutral-100">
               <tr>
-                <th className="px-6 py-3 text-right text-xs font-medium text-secondary-500 uppercase tracking-wider">اسم الشركة</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-secondary-500 uppercase tracking-wider">تاريخ الإنشاء</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">الإجراءات</th>
+                <th className="px-6 py-3 text-right text-xs font-semibold text-neutral-600 uppercase tracking-wider">اسم الشركة</th>
+                <th className="px-6 py-3 text-right text-xs font-semibold text-neutral-600 uppercase tracking-wider">تاريخ الإنشاء</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-neutral-600 uppercase tracking-wider">الإجراءات</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-secondary-200">
+            <tbody className="bg-white divide-y divide-neutral-200">
               {isLoading ? (
                 <tr><td colSpan={3} className="text-center py-10"><Loader2 className="h-8 w-8 animate-spin mx-auto text-primary-500" /></td></tr>
               ) : companies.length === 0 ? (
-                <tr><td colSpan={3} className="text-center py-10 text-secondary-500">لم يتم العثور على شركات.</td></tr>
+                <tr><td colSpan={3} className="text-center py-10 text-neutral-500">لم يتم العثور على شركات.</td></tr>
               ) : (
                 companies.map((company, index) => (
-                  <tr key={company.id} className="animate-fade-in" style={{ animationDelay: `${index * 50}ms` }}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-secondary-900">{company.companyName}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary-500">{new Date(company.createdAt).toLocaleDateString('ar-SA')}</td>
+                  <tr key={company.id} className="hover:bg-neutral-50 animate-fade-in" style={{ animationDelay: `${index * 50}ms` }}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900">{company.companyName}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">{new Date(company.createdAt).toLocaleDateString('ar-SA')}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-left text-sm font-medium space-x-2">
                       <button onClick={() => handleOpenModal(company)} className="text-primary-600 hover:text-primary-900 p-2 rounded-full hover:bg-primary-100">
                         <Edit size={18} />
@@ -140,10 +140,10 @@ const CompaniesPage: React.FC = () => {
       <Modal isOpen={isModalOpen} onClose={handleCloseModal} title={editingCompany ? 'تعديل الشركة' : 'إضافة شركة جديدة'}>
         <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-                <label htmlFor="companyName" className="block text-sm font-medium text-secondary-700 mb-1">اسم الشركة</label>
+                <label htmlFor="companyName" className="block text-sm font-medium text-neutral-700 mb-1">اسم الشركة</label>
                 <div className="relative rounded-md shadow-sm">
                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                        <Building className="h-5 w-5 text-secondary-400" />
+                        <Building className="h-5 w-5 text-neutral-400" />
                     </div>
                     <input
                         type="text"
@@ -159,7 +159,7 @@ const CompaniesPage: React.FC = () => {
             {error && <p className="text-sm text-red-600">{error}</p>}
             <div className="flex justify-start space-x-3 pt-2">
                 <button type="submit" className="bg-primary-600 py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white hover:bg-primary-700">حفظ</button>
-                <button type="button" onClick={handleCloseModal} className="bg-white py-2 px-4 border border-secondary-300 rounded-lg shadow-sm text-sm font-medium text-secondary-700 hover:bg-secondary-50">إلغاء</button>
+                <button type="button" onClick={handleCloseModal} className="bg-white py-2 px-4 border border-neutral-300 rounded-lg shadow-sm text-sm font-medium text-neutral-700 hover:bg-neutral-50">إلغاء</button>
             </div>
         </form>
       </Modal>
