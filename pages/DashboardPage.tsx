@@ -309,7 +309,7 @@ const DashboardPage: React.FC = () => {
 
   const totalPages = Math.ceil(pagination.total / pagination.limit);
 
-  const formControlClass = "w-full rounded-lg border-neutral-300 bg-neutral-50 focus:bg-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/50 sm:text-sm transition duration-150 ease-in-out";
+  const formControlClass = "w-full rounded-lg border-neutral-300 bg-neutral-50 text-neutral-900 focus:bg-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/50 sm:text-sm transition duration-150 ease-in-out";
 
   return (
     <div className="space-y-6">
@@ -396,7 +396,7 @@ const DashboardPage: React.FC = () => {
                       <select 
                         value={shipment.status} 
                         onChange={(e) => handleStatusChange(shipment.id, e.target.value as ShipmentStatus)}
-                        className="w-full rounded-md border-neutral-300 bg-neutral-50 focus:bg-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/50 sm:text-sm transition duration-150 ease-in-out p-1"
+                        className="w-full rounded-md border-neutral-300 bg-neutral-50 text-neutral-900 focus:bg-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/50 sm:text-sm transition duration-150 ease-in-out p-1"
                       >
                         {shipmentStatuses.map(status => (
                           <option key={status} value={status}>{status}</option>

@@ -102,7 +102,7 @@ const UsersPage: React.FC = () => {
         return <Navigate to="/dashboard" replace />;
     }
     
-    const formControlClass = "block w-full rounded-lg border-neutral-300 bg-neutral-50 focus:bg-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/50 sm:text-sm transition duration-150 ease-in-out";
+    const formControlClass = "block w-full rounded-lg border-neutral-300 bg-neutral-50 text-neutral-900 focus:bg-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/50 sm:text-sm transition duration-150 ease-in-out";
 
 
     return (
