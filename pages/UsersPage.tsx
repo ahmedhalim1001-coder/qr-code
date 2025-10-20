@@ -6,6 +6,7 @@ import Modal from '../components/Modal';
 import { Loader2, UserCheck, Shield, Edit, Trash2, Plus, User as UserIcon } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
+import ConfirmationModal from '../components/ConfirmationModal';
 
 const UsersPage: React.FC = () => {
     const { user: currentUser } = useAuth();
@@ -15,6 +16,9 @@ const UsersPage: React.FC = () => {
     const [editingUser, setEditingUser] = useState<User | null>(null);
     const [formData, setFormData] = useState({ fullName: '', username: '', role: 'user' as 'admin' | 'user' });
     const [error, setError] = useState('');
+    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+    const [userToDelete, setUserToDelete] = useState<number | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const fetchUsers = useCallback(async () => {
         setIsLoading(true);
@@ -74,17 +78,25 @@ const UsersPage: React.FC = () => {
         }
     };
     
-    const handleDelete = async (id: number) => {
-        if (window.confirm('هل أنت متأكد أنك تريد حذف هذا المستخدم؟ لا يمكن التراجع عن هذا الإجراء.')) {
-            try {
-                await api.deleteUser(id);
-                fetchUsers();
-            } catch (err: any) {
-                alert(`فشل حذف المستخدم: ${err.message}`);
-            }
-        }
+    const handleDelete = (id: number) => {
+        setUserToDelete(id);
+        setIsConfirmModalOpen(true);
     };
 
+    const confirmDeleteUser = async () => {
+        if (!userToDelete) return;
+        setIsDeleting(true);
+        try {
+            await api.deleteUser(userToDelete);
+            fetchUsers();
+            setIsConfirmModalOpen(false);
+            setUserToDelete(null);
+        } catch (err: any) {
+            alert(`فشل حذف المستخدم: ${err.message}`);
+        } finally {
+            setIsDeleting(false);
+        }
+    };
 
     if (currentUser?.role !== 'admin') {
         return <Navigate to="/dashboard" replace />;
@@ -118,8 +130,8 @@ const UsersPage: React.FC = () => {
                             {isLoading ? (
                                 <tr><td colSpan={5} className="text-center py-10"><Loader2 className="h-8 w-8 animate-spin mx-auto text-primary-500" /></td></tr>
                             ) : (
-                                users.map(user => (
-                                    <tr key={user.id}>
+                                users.map((user, index) => (
+                                    <tr key={user.id} className="animate-fade-in" style={{ animationDelay: `${index * 50}ms` }}>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-secondary-900">{user.fullName}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary-500">{user.username}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary-500">
@@ -170,6 +182,14 @@ const UsersPage: React.FC = () => {
                     </div>
                 </form>
             </Modal>
+            <ConfirmationModal
+                isOpen={isConfirmModalOpen}
+                onClose={() => setIsConfirmModalOpen(false)}
+                onConfirm={confirmDeleteUser}
+                title="تأكيد حذف المستخدم"
+                message="هل أنت متأكد أنك تريد حذف هذا المستخدم؟ سيتم إلغاء ربطه بأي شحنات مسجلة باسمه."
+                isConfirming={isDeleting}
+            />
         </div>
     );
 };

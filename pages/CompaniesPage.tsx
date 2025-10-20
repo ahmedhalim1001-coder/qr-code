@@ -4,6 +4,7 @@ import { ShippingCompany } from '../types';
 import Card from '../components/Card';
 import Modal from '../components/Modal';
 import { Plus, Edit, Trash2, Loader2, Building } from 'lucide-react';
+import ConfirmationModal from '../components/ConfirmationModal';
 
 const CompaniesPage: React.FC = () => {
   const [companies, setCompanies] = useState<ShippingCompany[]>([]);
@@ -12,6 +13,9 @@ const CompaniesPage: React.FC = () => {
   const [editingCompany, setEditingCompany] = useState<ShippingCompany | null>(null);
   const [companyName, setCompanyName] = useState('');
   const [error, setError] = useState('');
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [companyToDelete, setCompanyToDelete] = useState<number | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const fetchCompanies = useCallback(async () => {
     setIsLoading(true);
@@ -64,16 +68,26 @@ const CompaniesPage: React.FC = () => {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    if (window.confirm('هل أنت متأكد أنك تريد حذف هذه الشركة؟')) {
-      try {
-        await api.deleteCompany(id);
-        fetchCompanies();
-      } catch (err) {
-        alert('فشل حذف الشركة.');
-      }
+  const handleDelete = (id: number) => {
+    setCompanyToDelete(id);
+    setIsConfirmModalOpen(true);
+  };
+
+  const confirmDeleteCompany = async () => {
+    if (!companyToDelete) return;
+    setIsDeleting(true);
+    try {
+      await api.deleteCompany(companyToDelete);
+      fetchCompanies();
+      setIsConfirmModalOpen(false);
+      setCompanyToDelete(null);
+    } catch (err: any) {
+      alert(`فشل حذف الشركة: ${err.message}`);
+    } finally {
+      setIsDeleting(false);
     }
   };
+
 
   const formInputClass = "block w-full pr-10 rounded-lg border-secondary-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm transition";
 
@@ -103,8 +117,8 @@ const CompaniesPage: React.FC = () => {
               ) : companies.length === 0 ? (
                 <tr><td colSpan={3} className="text-center py-10 text-secondary-500">لم يتم العثور على شركات.</td></tr>
               ) : (
-                companies.map(company => (
-                  <tr key={company.id}>
+                companies.map((company, index) => (
+                  <tr key={company.id} className="animate-fade-in" style={{ animationDelay: `${index * 50}ms` }}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-secondary-900">{company.companyName}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary-500">{new Date(company.createdAt).toLocaleDateString('ar-SA')}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-left text-sm font-medium space-x-2">
@@ -149,6 +163,15 @@ const CompaniesPage: React.FC = () => {
             </div>
         </form>
       </Modal>
+
+      <ConfirmationModal
+        isOpen={isConfirmModalOpen}
+        onClose={() => setIsConfirmModalOpen(false)}
+        onConfirm={confirmDeleteCompany}
+        title="تأكيد حذف الشركة"
+        message="هل أنت متأكد أنك تريد حذف هذه الشركة؟ سيتم حذف جميع الشحنات المرتبطة بها أيضًا."
+        isConfirming={isDeleting}
+      />
     </div>
   );
 };

@@ -4,6 +4,7 @@ import { Device } from '../types';
 import Card from '../components/Card';
 import Modal from '../components/Modal';
 import { Plus, Trash2, Loader2, Copy, Check, HardDrive, ToggleLeft, ToggleRight, RefreshCw } from 'lucide-react';
+import ConfirmationModal from '../components/ConfirmationModal';
 
 const DevicesPage: React.FC = () => {
     const [devices, setDevices] = useState<Device[]>([]);
@@ -12,6 +13,9 @@ const DevicesPage: React.FC = () => {
     const [deviceName, setDeviceName] = useState('');
     const [error, setError] = useState('');
     const [copiedKey, setCopiedKey] = useState<string | null>(null);
+    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+    const [deviceToDelete, setDeviceToDelete] = useState<number | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const fetchDevices = useCallback(async () => {
         setIsLoading(true);
@@ -58,14 +62,23 @@ const DevicesPage: React.FC = () => {
         }
     };
 
-    const handleDelete = async (id: number) => {
-        if (window.confirm('هل أنت متأكد أنك تريد حذف هذا الجهاز؟ لا يمكن التراجع عن هذا الإجراء.')) {
-            try {
-                await api.deleteDevice(id);
-                fetchDevices();
-            } catch (err) {
-                alert('فشل حذف الجهاز.');
-            }
+    const handleDelete = (id: number) => {
+        setDeviceToDelete(id);
+        setIsConfirmModalOpen(true);
+    };
+
+    const confirmDeleteDevice = async () => {
+        if (!deviceToDelete) return;
+        setIsDeleting(true);
+        try {
+            await api.deleteDevice(deviceToDelete);
+            fetchDevices();
+            setIsConfirmModalOpen(false);
+            setDeviceToDelete(null);
+        } catch (err: any) {
+            alert(`فشل حذف الجهاز: ${err.message}`);
+        } finally {
+            setIsDeleting(false);
         }
     };
     
@@ -122,8 +135,8 @@ const DevicesPage: React.FC = () => {
                             {isLoading ? (
                                 <tr><td colSpan={4} className="text-center py-10"><Loader2 className="h-8 w-8 animate-spin mx-auto text-primary-500" /></td></tr>
                             ) : (
-                                devices.map(device => (
-                                    <tr key={device.id}>
+                                devices.map((device, index) => (
+                                    <tr key={device.id} className="animate-fade-in" style={{ animationDelay: `${index * 50}ms` }}>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-secondary-900">{device.deviceName}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary-500 font-mono flex items-center gap-2">
                                             <span className="truncate max-w-xs">{device.apiKey}</span>
@@ -179,6 +192,14 @@ const DevicesPage: React.FC = () => {
                     </div>
                 </form>
             </Modal>
+            <ConfirmationModal
+                isOpen={isConfirmModalOpen}
+                onClose={() => setIsConfirmModalOpen(false)}
+                onConfirm={confirmDeleteDevice}
+                title="تأكيد حذف الجهاز"
+                message="هل أنت متأكد أنك تريد حذف هذا الجهاز؟ سيتم إلغاء ربطه بأي شحنات مسجلة به."
+                isConfirming={isDeleting}
+            />
         </div>
     );
 };

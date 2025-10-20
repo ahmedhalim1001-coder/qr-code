@@ -1,4 +1,4 @@
-import { User, ShippingCompany, Device, Shipment } from './types';
+import { User, ShippingCompany, Device, Shipment, shipmentStatuses, ShipmentStatus } from '../types';
 
 // Helper to simulate network delay
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
@@ -47,6 +47,7 @@ class ApiService {
                 deviceId: Math.random() > 0.5 ? device.id : null,
                 deviceName: Math.random() > 0.5 ? device.deviceName : null,
                 scannedAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
+                status: shipmentStatuses[Math.floor(Math.random() * shipmentStatuses.length)],
             });
         }
         this.shipments.sort((a, b) => new Date(b.scannedAt).getTime() - new Date(a.scannedAt).getTime());
@@ -102,9 +103,15 @@ class ApiService {
   async deleteUser(id: number): Promise<void> {
       await delay(500);
       if (id === 1) throw new Error('Cannot delete the main admin user.'); // Safeguard
-      if (this.shipments.some(s => s.userId === id)) {
-          throw new Error('Cannot delete user with associated shipments. Please reassign shipments first.');
-      }
+      
+      // Unlink user from shipments instead of blocking deletion
+      this.shipments.forEach(shipment => {
+          if (shipment.userId === id) {
+              shipment.userId = null;
+              shipment.userName = null;
+          }
+      });
+      
       this.users = this.users.filter(u => u.id !== id);
   }
 
@@ -142,6 +149,8 @@ class ApiService {
 
   async deleteCompany(id: number): Promise<void> {
     await delay(500);
+    // Cascade delete: also remove shipments associated with this company
+    this.shipments = this.shipments.filter(s => s.companyId !== id);
     this.companies = this.companies.filter(c => c.id !== id);
   }
 
@@ -169,6 +178,13 @@ class ApiService {
 
   async deleteDevice(id: number): Promise<void> {
     await delay(500);
+    // Unlink device from shipments instead of blocking deletion
+    this.shipments.forEach(shipment => {
+        if (shipment.deviceId === id) {
+            shipment.deviceId = null;
+            shipment.deviceName = null;
+        }
+    });
     this.devices = this.devices.filter(d => d.id !== id);
   }
 
@@ -261,10 +277,24 @@ class ApiService {
         deviceId: device?.id || null,
         deviceName: device?.deviceName || null,
         scannedAt: scannedAt || new Date().toISOString(),
+        status: 'قيد التنفيذ',
     };
     this.shipments.unshift(newShipment); // Add to the top
     this.shipments.sort((a, b) => new Date(b.scannedAt).getTime() - new Date(a.scannedAt).getTime());
     return newShipment;
+  }
+
+  async updateShipment(id: number, status: ShipmentStatus): Promise<Shipment> {
+      await delay(300);
+      const shipment = this.shipments.find(s => s.id === id);
+      if (!shipment) throw new Error('Shipment not found.');
+      shipment.status = status;
+      return shipment;
+  }
+
+  async deleteShipment(id: number): Promise<void> {
+      await delay(500);
+      this.shipments = this.shipments.filter(s => s.id !== id);
   }
 }
 

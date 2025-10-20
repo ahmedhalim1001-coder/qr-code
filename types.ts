@@ -20,6 +20,10 @@ export interface Device {
   createdAt: string;
 }
 
+export type ShipmentStatus = 'قيد التنفيذ' | 'تم التوصيل' | 'مرتجع' | 'ملغي';
+
+export const shipmentStatuses: ShipmentStatus[] = ['قيد التنفيذ', 'تم التوصيل', 'مرتجع', 'ملغي'];
+
 export interface Shipment {
   id: number;
   barcode: string;
@@ -30,6 +34,7 @@ export interface Shipment {
   deviceId: number | null;
   deviceName: string | null;
   scannedAt: string;
+  status: ShipmentStatus;
 }
 
 export interface OfflineScan {

@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { api } from '../services/mockApiService';
-import { Shipment, ShippingCompany, User } from '../types';
+import { Shipment, ShippingCompany, User, shipmentStatuses, ShipmentStatus } from '../types';
 import Card from '../components/Card';
 import { useAuth } from '../contexts/AuthContext';
-import { Filter, Loader2, ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight, Download, Package, Calendar, Building, BarChart2, LineChart } from 'lucide-react';
+import { Filter, Loader2, ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight, Download, Package, Calendar, Building, BarChart2, LineChart, Trash2 } from 'lucide-react';
+import ConfirmationModal from '../components/ConfirmationModal';
 
 interface StatCardProps {
     title: string;
@@ -19,7 +20,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon: Icon, isLoading
                  <Loader2 className="w-8 h-8 animate-spin text-primary-500" />
             </div>
         ) : (
-            <>
+            <div className="flex items-center w-full animate-fade-in">
                 <div className="p-3 bg-primary-100 rounded-full">
                     <Icon className="w-6 h-6 text-primary-600" />
                 </div>
@@ -27,7 +28,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon: Icon, isLoading
                     <p className="text-sm font-medium text-secondary-500">{title}</p>
                     <p className="text-2xl font-bold text-secondary-800">{value}</p>
                 </div>
-            </>
+            </div>
         )}
     </Card>
 );
@@ -42,20 +43,24 @@ const ScansByCompanyChart: React.FC<{ data: { name: string; count: number }[], i
             <div className="mt-4 h-72 flex flex-col justify-center">
             {isLoading ? (
                 <Loader2 className="w-8 h-8 animate-spin text-primary-500 mx-auto" />
-            ) : top5Data.length === 0 ? (
-                <p className="text-center text-secondary-500">لا توجد بيانات مسح متاحة.</p>
             ) : (
-                <div className="flex justify-around items-end h-full space-x-2 pt-4">
-                    {top5Data.map(item => (
-                        <div key={item.name} className="flex flex-col items-center flex-1" title={`${item.name}: ${item.count} مسحات`}>
-                            <div className="text-sm font-bold text-secondary-700">{item.count}</div>
-                            <div
-                                className="w-full bg-primary-400 rounded-t-md hover:bg-primary-500 transition-all"
-                                style={{ height: `${(item.count / maxCount) * 100}%` }}
-                            ></div>
-                            <span className="mt-2 text-xs text-secondary-500 text-center break-words w-full">{item.name}</span>
+                <div className="animate-fade-in w-full h-full">
+                    {top5Data.length === 0 ? (
+                        <p className="text-center text-secondary-500 pt-28">لا توجد بيانات مسح متاحة.</p>
+                    ) : (
+                        <div className="flex justify-around items-end h-full space-x-2 pt-4">
+                            {top5Data.map(item => (
+                                <div key={item.name} className="flex flex-col items-center flex-1" title={`${item.name}: ${item.count} مسحات`}>
+                                    <div className="text-sm font-bold text-secondary-700">{item.count}</div>
+                                    <div
+                                        className="w-full bg-primary-400 rounded-t-md hover:bg-primary-500 transition-all"
+                                        style={{ height: `${(item.count / maxCount) * 100}%` }}
+                                    ></div>
+                                    <span className="mt-2 text-xs text-secondary-500 text-center break-words w-full">{item.name}</span>
+                                </div>
+                            ))}
                         </div>
-                    ))}
+                    )}
                 </div>
             )}
             </div>
@@ -71,11 +76,11 @@ const ScansOverTimeChart: React.FC<{ data: { date: string; count: number }[], is
 
     const maxCount = Math.max(...data.map(d => d.count), 1);
 
-    const points = data.map((point, i) => {
+    const points = data.length > 1 ? data.map((point, i) => {
         const x = (i / (data.length - 1)) * (width - padding * 2) + padding;
         const y = height - yPadding - ((point.count / maxCount) * (height - yPadding * 1.5));
         return `${x},${y}`;
-    }).join(' ');
+    }).join(' ') : '';
 
     return (
         <Card className="h-full">
@@ -83,17 +88,21 @@ const ScansOverTimeChart: React.FC<{ data: { date: string; count: number }[], is
             <div className="mt-4 h-72 flex items-center justify-center">
                 {isLoading ? (
                      <Loader2 className="w-8 h-8 animate-spin text-primary-500 mx-auto" />
-                ) : data.length === 0 ? (
-                    <p className="text-center text-secondary-500">لا توجد بيانات مسح متاحة.</p>
                 ) : (
-                    <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto">
-                        <line x1={padding} y1={height - yPadding} x2={width - padding} y2={height - yPadding} className="stroke-current text-secondary-300" strokeWidth="1"/>
-                        <text x={width - 5} y={height - yPadding + 4} className="text-xs fill-current text-secondary-500">0</text>
-                        <text x={width- 5} y={height - yPadding - ((height - yPadding * 1.5)) + 4} className="text-xs fill-current text-secondary-500">{maxCount}</text>
-                        <polyline fill="none" className="stroke-primary-500" strokeWidth="2" points={points}/>
-                        <text x={width - padding} y={height - yPadding + 15} textAnchor="end" className="text-xs fill-current text-secondary-500">{new Date(data[0]?.date).toLocaleDateString('ar-SA', { month: 'short', day: 'numeric' })}</text>
-                        <text x={padding} y={height - yPadding + 15} textAnchor="start" className="text-xs fill-current text-secondary-500">اليوم</text>
-                    </svg>
+                    <div className="animate-fade-in w-full h-full">
+                        {data.length < 2 ? (
+                            <p className="text-center text-secondary-500 pt-28">لا توجد بيانات كافية لعرض الرسم البياني.</p>
+                        ) : (
+                            <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto">
+                                <line x1={padding} y1={height - yPadding} x2={width - padding} y2={height - yPadding} className="stroke-current text-secondary-300" strokeWidth="1"/>
+                                <text x={padding - 5} y={height - yPadding + 4} textAnchor="end" className="text-xs fill-current text-secondary-500">0</text>
+                                <text x={padding- 5} y={height - yPadding - ((height - yPadding * 1.5)) + 4} textAnchor="end" className="text-xs fill-current text-secondary-500">{maxCount}</text>
+                                <polyline fill="none" className="stroke-primary-500" strokeWidth="2" points={points}/>
+                                <text x={width - padding} y={height - yPadding + 15} textAnchor="end" className="text-xs fill-current text-secondary-500">{new Date(data[data.length-1]?.date).toLocaleDateString('ar-SA', { month: 'short', day: 'numeric' })}</text>
+                                <text x={padding} y={height - yPadding + 15} textAnchor="start" className="text-xs fill-current text-secondary-500">اليوم</text>
+                            </svg>
+                        )}
+                    </div>
                 )}
             </div>
         </Card>
@@ -118,6 +127,10 @@ const DashboardPage: React.FC = () => {
       scansByDate: { date: string; count: number }[];
   }>({ totalShipments: 0, scansToday: 0, activeCompanies: 0, scansByCompany: [], scansByDate: [] });
   const [isStatsLoading, setIsStatsLoading] = useState(true);
+
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [shipmentToDelete, setShipmentToDelete] = useState<number | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   
   useEffect(() => {
     const fetchDashboardStats = async () => {
@@ -210,6 +223,43 @@ const DashboardPage: React.FC = () => {
     setPagination(prev => ({ ...prev, page: newPage }));
   };
 
+  const handleStatusChange = async (shipmentId: number, newStatus: ShipmentStatus) => {
+    const originalShipments = [...shipments];
+    setShipments(prevShipments => 
+      prevShipments.map(s => s.id === shipmentId ? { ...s, status: newStatus } : s)
+    );
+    
+    try {
+      await api.updateShipment(shipmentId, newStatus);
+    } catch (error) {
+      console.error("Failed to update shipment status", error);
+      setShipments(originalShipments);
+      alert("فشل تحديث حالة الشحنة.");
+    }
+  };
+
+  const handleDeleteShipment = (shipmentId: number) => {
+    setShipmentToDelete(shipmentId);
+    setIsConfirmModalOpen(true);
+  };
+
+  const confirmDeleteShipment = async () => {
+    if (!shipmentToDelete) return;
+    setIsDeleting(true);
+    try {
+      await api.deleteShipment(shipmentToDelete);
+      fetchShipments();
+      setIsConfirmModalOpen(false);
+      setShipmentToDelete(null);
+    } catch (error) {
+      console.error("Failed to delete shipment", error);
+      alert("فشل حذف الشحنة.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+
   const handleExportCsv = async () => {
     setIsExporting(true);
     try {
@@ -225,7 +275,7 @@ const DashboardPage: React.FC = () => {
         return;
       }
 
-      const headers = ['الباركود', 'الشركة', 'المستخدم', 'الجهاز', 'وقت المسح'];
+      const headers = ['الباركود', 'الشركة', 'المستخدم', 'الجهاز', 'الحالة', 'وقت المسح'];
       const csvContent = [
         headers.join(','),
         ...allFilteredShipments.map(s => [
@@ -233,6 +283,7 @@ const DashboardPage: React.FC = () => {
           s.companyName,
           s.userName || 'N/A',
           s.deviceName || 'N/A',
+          s.status,
           `"${new Date(s.scannedAt).toLocaleString('ar-SA')}"`
         ].join(','))
       ].join('\n');
@@ -290,18 +341,30 @@ const DashboardPage: React.FC = () => {
               {isExporting ? 'جاري التصدير...' : 'تصدير CSV'}
             </button>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-          <input type="date" name="from" value={filters.from} onChange={handleFilterChange} className={formControlClass} />
-          <input type="date" name="to" value={filters.to} onChange={handleFilterChange} className={formControlClass} />
-          <select name="companyId" value={filters.companyId} onChange={handleFilterChange} className={formControlClass}>
-            <option value="">كل الشركات</option>
-            {companies.map(c => <option key={c.id} value={c.id}>{c.companyName}</option>)}
-          </select>
-          {currentUser?.role === 'admin' && (
-            <select name="userId" value={filters.userId} onChange={handleFilterChange} className={`${formControlClass} lg:col-span-3`}>
-              <option value="">كل المستخدمين</option>
-              {users.map(u => <option key={u.id} value={u.id}>{u.fullName}</option>)}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div>
+            <label htmlFor="from" className="block text-sm font-medium text-secondary-700 mb-1">من تاريخ</label>
+            <input type="date" id="from" name="from" value={filters.from} onChange={handleFilterChange} className={formControlClass} />
+          </div>
+          <div>
+            <label htmlFor="to" className="block text-sm font-medium text-secondary-700 mb-1">إلى تاريخ</label>
+            <input type="date" id="to" name="to" value={filters.to} onChange={handleFilterChange} className={formControlClass} />
+          </div>
+          <div>
+            <label htmlFor="companyId" className="block text-sm font-medium text-secondary-700 mb-1">الشركة</label>
+            <select id="companyId" name="companyId" value={filters.companyId} onChange={handleFilterChange} className={formControlClass}>
+              <option value="">كل الشركات</option>
+              {companies.map(c => <option key={c.id} value={c.id}>{c.companyName}</option>)}
             </select>
+          </div>
+          {currentUser?.role === 'admin' && (
+            <div>
+              <label htmlFor="userId" className="block text-sm font-medium text-secondary-700 mb-1">المستخدم</label>
+              <select id="userId" name="userId" value={filters.userId} onChange={handleFilterChange} className={formControlClass}>
+                <option value="">كل المستخدمين</option>
+                {users.map(u => <option key={u.id} value={u.id}>{u.fullName}</option>)}
+              </select>
+            </div>
           )}
         </div>
 
@@ -312,23 +375,43 @@ const DashboardPage: React.FC = () => {
                 <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-secondary-500 uppercase tracking-wider">الباركود</th>
                 <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-secondary-500 uppercase tracking-wider">الشركة</th>
                 <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-secondary-500 uppercase tracking-wider">المستخدم</th>
-                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-secondary-500 uppercase tracking-wider">الجهاز</th>
                 <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-secondary-500 uppercase tracking-wider">وقت المسح</th>
+                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-secondary-500 uppercase tracking-wider">الحالة</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">الإجراءات</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-secondary-200">
               {isLoading ? (
-                <tr><td colSpan={5} className="text-center py-10"><Loader2 className="h-8 w-8 animate-spin mx-auto text-primary-500" /></td></tr>
+                <tr><td colSpan={6} className="text-center py-10"><Loader2 className="h-8 w-8 animate-spin mx-auto text-primary-500" /></td></tr>
               ) : shipments.length === 0 ? (
-                <tr><td colSpan={5} className="text-center py-10 text-secondary-500">لم يتم العثور على شحنات.</td></tr>
+                <tr><td colSpan={6} className="text-center py-10 text-secondary-500">لم يتم العثور على شحنات.</td></tr>
               ) : (
-                shipments.map(shipment => (
-                  <tr key={shipment.id} className="hover:bg-secondary-50">
+                shipments.map((shipment, index) => (
+                  <tr key={shipment.id} className="hover:bg-secondary-50 animate-fade-in" style={{ animationDelay: `${index * 50}ms` }}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-secondary-800 text-right">{shipment.barcode}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary-600 text-right">{shipment.companyName}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary-600 text-right">{shipment.userName || 'N/A'}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary-600 text-right">{shipment.deviceName || 'N/A'}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-secondary-600 text-right">{new Date(shipment.scannedAt).toLocaleString('ar-SA')}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <select 
+                        value={shipment.status} 
+                        onChange={(e) => handleStatusChange(shipment.id, e.target.value as ShipmentStatus)}
+                        className="w-full rounded-md border-secondary-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm transition p-1 bg-secondary-50"
+                      >
+                        {shipmentStatuses.map(status => (
+                          <option key={status} value={status}>{status}</option>
+                        ))}
+                      </select>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-left text-sm font-medium">
+                        <button 
+                          onClick={() => handleDeleteShipment(shipment.id)} 
+                          className="text-red-600 hover:text-red-900 p-2 rounded-full hover:bg-red-100"
+                          title="حذف الشحنة"
+                        >
+                            <Trash2 size={18} />
+                        </button>
+                    </td>
                   </tr>
                 ))
               )}
@@ -337,6 +420,14 @@ const DashboardPage: React.FC = () => {
         </div>
         {!isLoading && pagination.total > 0 && <PaginationControls pagination={pagination} totalPages={totalPages} onPageChange={handlePageChange} />}
       </Card>
+      <ConfirmationModal
+        isOpen={isConfirmModalOpen}
+        onClose={() => setIsConfirmModalOpen(false)}
+        onConfirm={confirmDeleteShipment}
+        title="تأكيد حذف الشحنة"
+        message="هل أنت متأكد أنك تريد حذف هذه الشحنة؟ لا يمكن التراجع عن هذا الإجراء."
+        isConfirming={isDeleting}
+      />
     </div>
   );
 };
